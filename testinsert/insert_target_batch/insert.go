@@ -15,7 +15,7 @@ import (
 const (
 	serviceCd = "1001" // 1001: ezwelfare
 	pushType  = "1001" // 1001: ezadmin, 1002: 기념일
-	msgSeq    = "10"
+	msgSeq    = "11"
 	osCd      = "20" //(00: 공통 ,10: iOS, 20:Android)
 	sliceCnt  = 100000
 )
