@@ -34,7 +34,7 @@ func main() {
 		signalStatus.SignalChk()
 		startTime := time.Now()
 		Run(sqlDataService)
-		log.Printf("[최종 실행시간] %s\n\n", time.Since(startTime))
+		log.Printf("[REPEAT REALTIME 최종 실행시간] %s\n\n", time.Since(startTime))
 		time.Sleep(time.Millisecond * 500)
 	}
 }
@@ -93,7 +93,7 @@ func init() {
 }
 
 func setExecSetting() {
-	// 명명줄 옵션: DEV, REAL 구분셋팅
+	// 명령줄 옵션: DEV, REAL 구분셋팅
 	flagExecMode := flag.String("mode", "", "실행모드(DEV, REAL) 명령줄 옵션 없으면 기본 DEV 모드입니다.\n ex) -mode=DEV")
 
 	flag.Parse()

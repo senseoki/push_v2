@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -19,9 +18,10 @@ const (
 )
 
 func main() {
-	var msgSeq int
+	var msgSeq uint64
 	for {
 		msgSeq++
+		msgSeqresult := fmt.Sprintf("%v", msgSeq)
 		fmt.Println("DB Insert Start...")
 		startTime := time.Now()
 
@@ -33,7 +33,7 @@ func main() {
 		valueStrings := make([]string, 0, sliceCnt)
 		for i := 0; i < sliceCnt; i++ {
 			//valueStrings = append(valueStrings, "(\"message"+strconv.Itoa(i)+"\", 2001, \"TOKEN1459838497603\", 10, 32827980)")
-			valueStrings = append(valueStrings, "('"+serviceCd+"', '"+pushType+"', \""+strconv.Itoa(msgSeq)+"\", \"1001\", \""+strconv.Itoa(msgSeq)+" ====== message2-1465446293315\", \"안드로이드 발송 테스트1465446293315\", \"/upload/2015/12/7/56id4sHd2v_20151207094927412000.png\", \"/index.jsp\", 32827980, \"A5UIZK8TECQ1HFUbyJap03EoJ2Kk5JCnKVk9S65YLIU=\",'"+osCd+"', \"6fafa87b 74913a90 5728a526 eec12b37 a9319cb4 0d5fd963 6fcf21a4 6bf409e0\", NOW())")
+			valueStrings = append(valueStrings, "('"+serviceCd+"', '"+pushType+"', \""+msgSeqresult+"\", \"1001\", \""+msgSeqresult+" ====== message2-1465446293315\", \"안드로이드 발송 테스트1465446293315\", \"/upload/2015/12/7/56id4sHd2v_20151207094927412000.png\", \"/index.jsp\", 32827980, \"A5UIZK8TECQ1HFUbyJap03EoJ2Kk5JCnKVk9S65YLIU=\",'"+osCd+"', \"6fafa87b 74913a90 5728a526 eec12b37 a9319cb4 0d5fd963 6fcf21a4 6bf409e0\", NOW())")
 		}
 		_, err = db.Exec("INSERT INTO push_target_realtime (SERVICE_CD, PUSH_TYPE,MSG_SEQ,MSG_TYPE,SEND_MSG,IMG_TITLE,IMG_FILE_PATH,LINK_URL,USER_KEY,MOBILE,OS_CD,PUSH_TOKEN,REG_DT) VALUES " + strings.Join(valueStrings, ","))
 		if err != nil {
