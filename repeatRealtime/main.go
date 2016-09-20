@@ -2,6 +2,7 @@ package main
 
 import (
 	"container/list"
+	"flag"
 	"log"
 	"push_v2/module"
 	realtime "push_v2/realtime/service"
@@ -11,7 +12,6 @@ import (
 )
 
 var (
-	execMode     = "DEV" //DEV or REAL
 	dbURL        string
 	signalStatus *module.SignalStatus
 )
@@ -21,7 +21,7 @@ const (
 	sqlLimitPushTarget = 100000
 	mqURL1             = "amqp://ezwel:ezwel@192.168.110.155:5672/push" //PushRMQ01 (Realtime)
 	DEVDbURL           = "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8"
-	REALDbURL          = "push:ezpush_0606@tcp(192.168.112.23:3306)/ez_push?charset=utf8"
+	REALDbURL          = "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8"
 	pathLog            = "/pushlog/repeatRealtime/"
 	qName              = "push_queue"
 )
@@ -93,9 +93,23 @@ func init() {
 }
 
 func setExecSetting() {
-	if execMode == "DEV" {
-		dbURL = DEVDbURL
-	} else {
-		dbURL = REALDbURL
+	// 명명줄 옵션: DEV, REAL 구분셋팅
+	flagExecMode := flag.String("mode", "", "실행모드(DEV, REAL) 명령줄 옵션 없으면 기본 DEV 모드입니다.\n ex) -mode=DEV")
+
+	flag.Parse()
+
+	if flag.NFlag() == 0 {
+		flag.Usage()
+		*flagExecMode = "DEV"
 	}
+
+	if *flagExecMode == "DEV" {
+		dbURL = DEVDbURL
+	} else if *flagExecMode == "REAL" {
+		dbURL = REALDbURL
+	} else {
+		*flagExecMode = "DEV"
+		dbURL = DEVDbURL
+	}
+	log.Printf("프로그램 실행모드 : %s\n", *flagExecMode)
 }

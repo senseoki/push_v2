@@ -10,7 +10,7 @@ const (
         from push_target_realtime_status
         where send_status in (0,4)
         order by push_target_seq
-        limit 10000 `
+        limit 1000 `
 
 	InsertPushTargetRealtimeStatusLog = `
         insert into push_target_realtime_status_log
