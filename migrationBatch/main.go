@@ -14,8 +14,8 @@ var (
 )
 
 const (
-	DEVDbURL  = "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8"
-	REALDbURL = "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8"
+	DEVDbURL  = "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local"
+	REALDbURL = "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8&parseTime=true&loc=Local"
 	pathLog   = "/pushlog/migrationBatch/"
 )
 

@@ -21,8 +21,8 @@ const (
 	sqlLimitPushTarget = 100000
 	mqURL1             = "amqp://ezwel:ezwel@192.168.110.91:5672/push" //PushMQ01 (Batch)
 	mqURL2             = "amqp://ezwel:ezwel@192.168.110.96:5672/push" //PushMQ03 (Batch)
-	DEVDbURL           = "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8"
-	REALDbURL          = "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8"
+	DEVDbURL           = "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local"
+	REALDbURL          = "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8&parseTime=true&loc=Local"
 	pathLog            = "/pushlog/batch/"
 	qName              = "push_queue"
 
