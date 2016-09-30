@@ -2,6 +2,7 @@ package module
 
 // Message ...
 type Message struct {
+	SendType       string
 	ServiceCd      string `db:"service_cd"`
 	PushType       string `db:"push_type"`
 	MsgSeq         string `db:"msg_seq"`

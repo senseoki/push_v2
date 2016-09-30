@@ -17,7 +17,8 @@ var (
 )
 
 const (
-	GoroutineCnt       = 20 // 1보다큰 짝수로 지정!
+	SendType           = "1002" // Batch
+	GoroutineCnt       = 20     // 1보다큰 짝수로 지정!
 	sqlLimitPushTarget = 100000
 	mqURL1             = "amqp://ezwel:ezwel@192.168.110.91:5672/push" //PushMQ01 (Batch)
 	mqURL2             = "amqp://ezwel:ezwel@192.168.110.96:5672/push" //PushMQ03 (Batch)
@@ -88,7 +89,7 @@ func Run(sqlDataService *service.SQLDataService) {
 				pushQueue := new(module.PushQueue)
 				if i%2 == 0 {
 					go func(ls *list.List, cntSl2 int, pushQueue *module.PushQueue) {
-						confirmedSl := pushQueue.SendMQ(ls, mqChSl2[cntSl2])
+						confirmedSl := pushQueue.SendMQ(ls, mqChSl2[cntSl2], SendType)
 						if len(confirmedSl) > 0 {
 							service.InsertStatus(confirmedSl, dbConn)
 						}
@@ -97,7 +98,7 @@ func Run(sqlDataService *service.SQLDataService) {
 					cntSl2++
 				} else {
 					go func(ls *list.List, cntSl1 int, pushQueue *module.PushQueue) {
-						confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl1])
+						confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl1], SendType)
 						if len(confirmedSl) > 0 {
 							service.InsertStatus(confirmedSl, dbConn)
 						}

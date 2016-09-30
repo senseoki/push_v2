@@ -17,6 +17,7 @@ var (
 )
 
 const (
+	SendType           = "1001" // Real
 	GoroutineCnt       = 20
 	sqlLimitPushTarget = 100000
 	mqURL1             = "amqp://ezwel:ezwel@192.168.110.155:5672/push" //PushRMQ01 (Realtime)
@@ -65,7 +66,7 @@ func Run(sqlDataService *service.SQLDataService) {
 			wg.Add(1)
 			pushQueue := new(module.RepeatPushQueue)
 			go func(ls *list.List, cntSl int, pushQueue *module.RepeatPushQueue) {
-				confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl])
+				confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl], SendType)
 				if len(confirmedSl) > 0 {
 					realtime.InsertRealtimeStatus(confirmedSl, dbConn)
 				}

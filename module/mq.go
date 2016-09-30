@@ -10,6 +10,7 @@ import (
 )
 
 type PushQueue struct {
+	SendType      string `json:"SEND_TYPE`
 	PushTargetSeq string `json:"PUSH_TARGET_SEQ"`
 	ServiceCd     string `json:"SERVICE_CD"`
 	PushType      string `json:"PUSH_TYPE"`
@@ -96,7 +97,7 @@ func CloseMQ(connSl []*amqp.Connection, chSl []*amqp.Channel) {
 }
 
 // SendMQ (PushQueue)...
-func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel) []string {
+func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel, sendType string) []string {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Printf("[Recover] PushQueue sendMQ() : %s\n", r)
@@ -104,6 +105,7 @@ func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel) []string {
 	}()
 	confirmedSl := make([]string, 0, list.Len())
 	for e := list.Front(); e != nil; e = e.Next() {
+		pushQueue.SendType = sendType
 		pushQueue.PushTargetSeq = e.Value.(Message).PushTargetSeq
 		pushQueue.ServiceCd = e.Value.(Message).ServiceCd
 		pushQueue.PushType = e.Value.(Message).PushType
@@ -139,7 +141,7 @@ func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel) []string {
 }
 
 // SendMQ (RepeatPushQueue)...
-func (pushQueue *RepeatPushQueue) SendMQ(li *list.List, ch *amqp.Channel) []string {
+func (pushQueue *RepeatPushQueue) SendMQ(li *list.List, ch *amqp.Channel, sendType string) []string {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Printf("[Recover] RepeatPushQueue sendMQ() : %s\n", r)
@@ -147,6 +149,7 @@ func (pushQueue *RepeatPushQueue) SendMQ(li *list.List, ch *amqp.Channel) []stri
 	}()
 	confirmedSl := make([]string, 0, li.Len())
 	for e := li.Front(); e != nil; e = e.Next() {
+		pushQueue.SendType = sendType
 		pushQueue.PushTargetSeq = e.Value.(Message).PushTargetSeq
 		pushQueue.ServiceCd = e.Value.(Message).ServiceCd
 		pushQueue.PushType = e.Value.(Message).PushType
