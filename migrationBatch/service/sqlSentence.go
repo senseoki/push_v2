@@ -12,14 +12,24 @@ const (
 
 	InsertPushTargetStatusLog = `
          insert into push_target_status_log 
-         select *
+         select  push_target_seq
+                ,send_status
+                ,reg_dt
          from push_target_status
          where send_status in (0,4)
          and push_target_seq in `
 
 	InsertPushTargetLog = `
         insert into push_target_log
-        select *
+        select   push_target_seq
+                ,service_cd
+                ,push_type
+                ,msg_seq
+                ,user_key
+                ,mobile
+                ,os_cd
+                ,push_token
+                ,reg_dt
         from push_target
         where push_target_seq in `
 

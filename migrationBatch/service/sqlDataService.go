@@ -49,9 +49,6 @@ func (sds *SQLDataService) GetMigrationBatchTarget() *list.List {
 // ExecMigrationBatchTarget ...
 func (sds *SQLDataService) ExecMigrationBatchTarget(li *list.List) {
 	defer func() {
-		sds.rows.Close()
-		sds.tx.Commit()
-		module.DBClose(sds.db)
 		if r := recover(); r != nil {
 			sds.tx.Rollback()
 			log.Printf("[Recover] ExecMigrationBatch() : %s\n", r)
@@ -59,6 +56,7 @@ func (sds *SQLDataService) ExecMigrationBatchTarget(li *list.List) {
 	}()
 
 	sds.db = module.DBconn(sds.DbURL)
+	defer module.DBClose(sds.db)
 
 	values := make([]string, 0, 0)
 	for e := li.Front(); e != nil; e = e.Next() {
@@ -72,6 +70,7 @@ func (sds *SQLDataService) ExecMigrationBatchTarget(li *list.List) {
 	sds.tx = sds.db.MustBegin()
 	sds.tx.MustExec(DeletePushTarget + "(" + strings.Join(values, ",") + ")")
 	sds.tx.MustExec(DeletePushTargetStatus + "(" + strings.Join(values, ",") + ")")
+	sds.tx.Commit()
 }
 
 // ExecMigrationBatchMessage ...
