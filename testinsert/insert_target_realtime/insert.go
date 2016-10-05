@@ -14,7 +14,7 @@ const (
 	pushType  = "1001" // 1001: ezadmin, 1002: 기념일
 	msgSeq    = "1"
 	osCd      = "20" //(00: 공통 ,10: iOS, 20:Android)
-	sliceCnt  = 5
+	sliceCnt  = 1
 )
 
 func main() {
@@ -48,7 +48,7 @@ func main() {
 
 		//fmt.Printf("[INSERT] 최종 실행시간: %s\n", time.Since(startTime))
 		fmt.Printf("[INSERT] 최종 실행시간: %s\n", time.Now().Sub(startTime))
-		//time.Sleep(time.Millisecond * 100)
+		time.Sleep(time.Millisecond * 1000)
 	}
 	db.Close()
 }

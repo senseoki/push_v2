@@ -14,14 +14,28 @@ const (
 
 	InsertPushTargetRealtimeStatusLog = `
         insert into push_target_realtime_status_log
-        select *
+        select push_target_seq, send_status, reg_dt
         from push_target_realtime_status
         where send_status in (0,4)
         and push_target_seq in `
 
 	InsertPushTargetRealtimeLog = `
         insert into push_target_realtime_log
-        select *
+        select  push_target_seq
+               ,service_cd
+               ,push_type
+               ,msg_seq
+               ,msg_type
+               ,send_msg
+               ,send_hope_dt
+               ,img_title
+               ,img_file_path
+               ,link_url
+               ,user_key
+               ,mobile
+               ,os_cd
+               ,push_token
+               ,reg_dt               
         from push_target_realtime
         where push_target_seq in `
 

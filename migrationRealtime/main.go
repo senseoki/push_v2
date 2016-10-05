@@ -37,6 +37,7 @@ func Run(sqlDataService *service.SQLDataService) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Printf("[Recover] Run() : %s\n", r)
+			time.Sleep(time.Millisecond * 3000)
 		}
 	}()
 	li := sqlDataService.GetMigrationRealtimeMessage()
