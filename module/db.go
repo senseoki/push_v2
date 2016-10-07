@@ -13,9 +13,9 @@ func DBconn(dbURL string) *sqlx.DB {
 	if err != nil {
 		log.Println("sql.Open() Error ...")
 	}
-	if err = db.Ping(); err != nil {
-		log.Println("db.Ping() Error ...")
-	}
+	// if err = db.Ping(); err != nil {
+	// 	log.Println("db.Ping() Error ...")
+	// }
 	db.SetMaxOpenConns(60)
 	return db
 }
