@@ -33,9 +33,8 @@ func main() {
 	sqlDataService := &service.SQLDataService{DbURL: dbURL, SqlLimitPushTarget: sqlLimitPushTarget, GoroutineCnt: GoroutineCnt}
 	for {
 		signalStatus.SignalChk()
-		startTime := time.Now()
 		Run(sqlDataService)
-		log.Printf("[REPEAT REALTIME 최종 실행시간] %s\n\n", time.Since(startTime))
+		log.Println("[REPEAT REALTIME FINISH]")
 		time.Sleep(time.Millisecond * 500)
 	}
 }
@@ -82,11 +81,11 @@ func Run(sqlDataService *service.SQLDataService) {
 }
 
 func init() {
-	// #00. ExecSetting
-	setExecSetting()
-	// #01. Log File 을 설정하고 유지한다.
+	// #00. Log File 을 설정하고 유지한다.
 	fileLog := &module.FileLog{Path: pathLog}
 	fileLog.ExeFileLog()
+	// #01. ExecSetting
+	setExecSetting()
 	// #02. 신호가 들어오면 프로그램 중지(현재 수행중인 프로세스 처리끝나면 중지)
 	// 사용 : 배포나 유지보수용
 	signalStatus = new(module.SignalStatus)

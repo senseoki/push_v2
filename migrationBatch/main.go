@@ -28,9 +28,8 @@ func main() {
 		sqlDataService := &service.SQLDataService{DbURL: dbURL}
 		for {
 			signalStatus.SignalChk()
-			startTime := time.Now()
 			RunTarget(sqlDataService)
-			log.Printf("[MIGRATION BATCH RunTarget 최종 실행시간] %s\n\n", time.Since(startTime))
+			log.Println("[MIGRATION BATCH FINISH]")
 			time.Sleep(time.Millisecond * 500)
 		}
 	}()
@@ -80,11 +79,11 @@ func RunMessage(sqlDataService *service.SQLDataService) {
 }
 
 func init() {
-	// #00. ExecSetting
-	setExecSetting()
-	// #01. Log File 을 설정하고 유지한다.
+	// #00. Log File 을 설정하고 유지한다.
 	fileLog := &module.FileLog{Path: pathLog}
 	fileLog.ExeFileLog()
+	// #01. ExecSetting
+	setExecSetting()
 	// #02. 신호가 들어오면 프로그램 중지(현재 수행중인 프로세스 처리끝나면 중지)
 	signalStatus = new(module.SignalStatus)
 	signalStatus.InitSignal()

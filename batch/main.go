@@ -8,6 +8,8 @@ import (
 	"push_v2/module"
 	"sync"
 	"time"
+
+	_ "net/http/pprof"
 )
 
 var (
@@ -32,14 +34,16 @@ const (
 )
 
 func main() {
+	// go func() {
+	// 	http.ListenAndServe("localhost:6060", nil)
+	// }()
 	log.Println("[========== START PUSH BATCH V2 ==========]")
 	// SqlDataService 생성하고 dbURL을 주입한다.
 	sqlDataService := &service.SQLDataService{DbURL: dbURL, SqlLimitPushTarget: sqlLimitPushTarget, GoroutineCnt: GoroutineCnt}
 	for {
 		signalStatus.SignalChk()
-		startTime := time.Now()
 		Run(sqlDataService)
-		log.Printf("[BATCH FINISH] %s\n\n", time.Since(startTime))
+		log.Println("[BATCH FINISH]")
 		time.Sleep(time.Millisecond * 500)
 	}
 }
@@ -115,10 +119,10 @@ func Run(sqlDataService *service.SQLDataService) {
 
 func init() {
 
-	// #01. Log File 을 설정하고 유지한다.
+	// #00. Log File 을 설정하고 유지한다.
 	fileLog := &module.FileLog{Path: pathLog}
 	fileLog.ExeFileLog()
-	// #00. ExecSetting
+	// #01. ExecSetting
 	setExecSetting()
 	// #02. 신호가 들어오면 프로그램 중지(현재 수행중인 프로세스 처리끝나면 중지)
 	signalStatus = new(module.SignalStatus)
