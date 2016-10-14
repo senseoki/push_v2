@@ -14,6 +14,7 @@ import (
 var (
 	dbURL        string
 	signalStatus *module.SignalStatus
+	panicStatus  *int = new(int)
 )
 
 const (
@@ -41,11 +42,7 @@ func main() {
 
 // Run ...
 func Run(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] Run() : %s\n", r)
-		}
-	}()
+	defer module.ResolvePanic("[RepeatRealtime Run()]", panicStatus)
 	listSlice := module.MakeSliceList(GoroutineCnt)
 	// 전송할 메세지를 조회한다.
 	sqlDataService.GetRepeatRealtimeMessage(listSlice)
@@ -65,6 +62,7 @@ func Run(sqlDataService *service.SQLDataService) {
 			wg.Add(1)
 			pushQueue := new(module.RepeatPushQueue)
 			go func(ls *list.List, cntSl int, pushQueue *module.RepeatPushQueue) {
+				defer module.ResolvePanic("[RepeatRealtime listSlice goroutine]", panicStatus)
 				confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl], SendType)
 				if len(confirmedSl) > 0 {
 					realtime.InsertRealtimeStatus(confirmedSl, dbConn)

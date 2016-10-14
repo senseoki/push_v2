@@ -22,8 +22,8 @@ const (
 
 func main() {
 	//db, err := sqlx.Connect("mysql", "study:study@tcp(localhost:3306)/push?charset=utf8")
-	db, err := sqlx.Connect("mysql", "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // DEV
-	//db, err := sqlx.Connect("mysql", "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // REAL
+	//db, err := sqlx.Connect("mysql", "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // DEV
+	db, err := sqlx.Connect("mysql", "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // REAL
 	db.SetMaxOpenConns(100)
 	tx := db.MustBegin()
 

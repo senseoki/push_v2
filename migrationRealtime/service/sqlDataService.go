@@ -23,9 +23,6 @@ func (sds *SQLDataService) GetMigrationRealtimeMessage() *list.List {
 	defer func() {
 		sds.rows.Close()
 		module.DBClose(sds.db)
-		if r := recover(); r != nil {
-			log.Printf("[Recover] GetMigrationRealtimeMessage() : %s\n", r)
-		}
 	}()
 
 	sds.db = module.DBconn(sds.DbURL)

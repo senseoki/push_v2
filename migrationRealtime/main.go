@@ -11,6 +11,7 @@ import (
 var (
 	dbURL        string
 	signalStatus *module.SignalStatus
+	panicStatus  *int = new(int)
 )
 
 const (
@@ -33,12 +34,8 @@ func main() {
 
 // Run ...
 func Run(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] Run() : %s\n", r)
-			time.Sleep(time.Millisecond * 3000)
-		}
-	}()
+	defer module.ResolvePanic("[MigrationRealtime Run()]", panicStatus)
+
 	li := sqlDataService.GetMigrationRealtimeMessage()
 	if li.Len() == 0 {
 		return

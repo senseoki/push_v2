@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 )
 
 const (
@@ -14,14 +14,15 @@ const (
 	pushType  = "1001" // 1001: ezadmin, 1002: 기념일
 	msgSeq    = "1"
 	osCd      = "20" //(00: 공통 ,10: iOS, 20:Android)
-	sliceCnt  = 5
+	sliceCnt  = 1
 )
 
 func main() {
 	var msgSeq uint64
 
 	//db, err := sql.Open("mysql", "study:study@tcp(localhost:3306)/push?charset=utf8")
-	db, err := sql.Open("mysql", "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local")
+	//db, err := sql.Open("mysql", "push:ezpush_0606@tcp(192.168.112.100:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // DEV
+	db, err := sqlx.Connect("mysql", "push:ezpush_0606@tcp(192.168.111.23:3306)/ez_push?charset=utf8&parseTime=true&loc=Local") // REAL
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +49,7 @@ func main() {
 
 		//fmt.Printf("[INSERT] 최종 실행시간: %s\n", time.Since(startTime))
 		fmt.Printf("[INSERT] 최종 실행시간: %s\n", time.Now().Sub(startTime))
-		//time.Sleep(time.Millisecond * 1000)
+		time.Sleep(time.Millisecond * 1000)
 	}
 	db.Close()
 }

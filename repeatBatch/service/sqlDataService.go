@@ -23,9 +23,6 @@ func (s *SQLDataService) GetRepeatMessage(listSlice []*list.List) {
 	defer func() {
 		s.rows.Close()
 		module.DBClose(s.db)
-		if r := recover(); r != nil {
-			log.Printf("[Recover] GetRepeatMessage() : %s\n", r)
-		}
 	}()
 	s.db = module.DBconn(s.DbURL)
 	s.rows, s.err = s.db.Queryx(SelectPushBatchMsg, s.SqlLimitPushTarget)

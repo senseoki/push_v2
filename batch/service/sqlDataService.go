@@ -23,11 +23,7 @@ type SQLDataService struct {
 func (sc *SQLDataService) GetMessage() *module.Message {
 	defer func() {
 		module.DBClose(sc.db)
-		if r := recover(); r != nil {
-			log.Printf("[Recover] GetMessage : %s\n", r)
-		}
 	}()
-
 	sc.db = module.DBconn(sc.DbURL)
 	m := new(module.Message)
 	sc.err = sc.db.Get(m, Select_PushMessage)
@@ -43,9 +39,6 @@ func (sc *SQLDataService) GetMessage() *module.Message {
 func (sc *SQLDataService) UpdateMessageSendStatus(m *module.Message, status string) {
 	defer func() {
 		module.DBClose(sc.db)
-		if r := recover(); r != nil {
-			log.Printf("[Recover] UpdateMessageSendStatus : %s\n", r)
-		}
 	}()
 
 	sc.db = module.DBconn(sc.DbURL)
@@ -82,9 +75,6 @@ func (sc *SQLDataService) GetTargetUsers(listSlice []*list.List, m *module.Messa
 	defer func() {
 		sc.rows.Close()
 		module.DBClose(sc.db)
-		if r := recover(); r != nil {
-			log.Printf("[Recover] GetTargetUsers() : %s\n", r)
-		}
 	}()
 
 	sc.db = module.DBconn(sc.DbURL)
@@ -109,11 +99,6 @@ func (sc *SQLDataService) GetTargetUsers(listSlice []*list.List, m *module.Messa
 
 // InsertStatus ...
 func InsertStatus(inVals []string, db *sqlx.DB) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] InsertStatus() : %s\n", r)
-		}
-	}()
 	_, err := db.Exec(Insert_PushTargetStatus + strings.Join(inVals, ","))
 	if err != nil {
 		log.Printf("InsertStatus : %s\n", err)

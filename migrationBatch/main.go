@@ -11,6 +11,7 @@ import (
 var (
 	dbURL        string
 	signalStatus *module.SignalStatus
+	panicStatus  *int = new(int)
 )
 
 const (
@@ -25,6 +26,7 @@ func main() {
 
 	// Migration Batch goroutine : push_target
 	go func() {
+		defer module.ResolvePanic("[Migration Batch goroutine : push_target]", panicStatus)
 		sqlDataService := &service.SQLDataService{DbURL: dbURL}
 		for {
 			signalStatus.SignalChk()
@@ -36,6 +38,7 @@ func main() {
 
 	// Migration Batch goroutine : push_message
 	go func() {
+		defer module.ResolvePanic("[Migration Batch goroutine : push_message]", panicStatus)
 		sqlDataService := &service.SQLDataService{DbURL: dbURL}
 		for {
 			signalStatus.SignalChk()
@@ -51,11 +54,6 @@ func main() {
 
 // RunTarget ...
 func RunTarget(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] RunTarget() : %s\n", r)
-		}
-	}()
 	li := sqlDataService.GetMigrationBatchTarget()
 	if li.Len() == 0 {
 		return
@@ -69,11 +67,6 @@ func RunTarget(sqlDataService *service.SQLDataService) {
 // 하루지난 push_message 삭제
 // 이미 push_message_log에 이주 되어 있음(batch시 이주된다. 통계문제로 인해서 미리 이주하고 후 삭제)
 func RunMessage(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] RunMessage() : %s\n", r)
-		}
-	}()
 	resultCnt := sqlDataService.ExecMigrationBatchMessage()
 	log.Printf("[0]	MIGRATION BATCH MESSAGE DELETE : %d 삭제 완료!\n", resultCnt)
 }

@@ -15,6 +15,7 @@ var (
 	dbURL           string
 	MQConnectionCnt int
 	signalStatus    *module.SignalStatus
+	panicStatus     *int = new(int)
 )
 
 const (
@@ -42,11 +43,7 @@ func main() {
 
 // Run ...
 func Run(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] Run() : %s\n", r)
-		}
-	}()
+	defer module.ResolvePanic("[RepeatBatch Run()]", panicStatus)
 	listSlice := module.MakeSliceList(GoroutineCnt)
 	// 전송할 메세지를 조회한다.
 	sqlDataService.GetRepeatMessage(listSlice)
@@ -67,6 +64,7 @@ func Run(sqlDataService *service.SQLDataService) {
 			pushQueue := new(module.RepeatPushQueue)
 			if i%2 == 0 {
 				go func(ls *list.List, cntSl2 int, pushQueue *module.RepeatPushQueue) {
+					defer module.ResolvePanic("[RepeatBatch listSlice goroutine even]", panicStatus)
 					confirmedSl := pushQueue.SendMQ(ls, mqChSl2[cntSl2], SendType)
 					if len(confirmedSl) > 0 {
 						batch.InsertStatus(confirmedSl, dbConn)
@@ -76,6 +74,7 @@ func Run(sqlDataService *service.SQLDataService) {
 				cntSl2++
 			} else {
 				go func(ls *list.List, cntSl1 int, pushQueue *module.RepeatPushQueue) {
+					defer module.ResolvePanic("[RepeatBatch listSlice goroutine odd]", panicStatus)
 					confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl1], SendType)
 					batch.InsertStatus(confirmedSl, dbConn)
 					wg.Done()

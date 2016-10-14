@@ -16,6 +16,7 @@ var (
 	dbURL           string
 	MQConnectionCnt int
 	signalStatus    *module.SignalStatus
+	panicStatus     *int = new(int)
 )
 
 const (
@@ -50,11 +51,8 @@ func main() {
 
 // Run ...
 func Run(sqlDataService *service.SQLDataService) {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] Run() : %s\n", r)
-		}
-	}()
+	defer module.ResolvePanic("[Batch Run()]", panicStatus)
+
 	// 1. 전송할 메세지를 조회한다.
 	message := sqlDataService.GetMessage()
 	if message.MsgSeq == "" {
@@ -93,6 +91,7 @@ func Run(sqlDataService *service.SQLDataService) {
 				pushQueue := new(module.PushQueue)
 				if i%2 == 0 {
 					go func(ls *list.List, cntSl2 int, pushQueue *module.PushQueue) {
+						defer module.ResolvePanic("[Batch Run() listSlice goroutine even]", panicStatus)
 						confirmedSl := pushQueue.SendMQ(ls, mqChSl2[cntSl2], SendType)
 						if len(confirmedSl) > 0 {
 							service.InsertStatus(confirmedSl, dbConn)
@@ -102,6 +101,7 @@ func Run(sqlDataService *service.SQLDataService) {
 					cntSl2++
 				} else {
 					go func(ls *list.List, cntSl1 int, pushQueue *module.PushQueue) {
+						defer module.ResolvePanic("[Batch Run() listSlice goroutine odd]", panicStatus)
 						confirmedSl := pushQueue.SendMQ(ls, mqChSl[cntSl1], SendType)
 						if len(confirmedSl) > 0 {
 							service.InsertStatus(confirmedSl, dbConn)

@@ -98,11 +98,6 @@ func CloseMQ(connSl []*amqp.Connection, chSl []*amqp.Channel) {
 
 // SendMQ (PushQueue)...
 func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel, sendType string) []string {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] PushQueue sendMQ() : %s\n", r)
-		}
-	}()
 	confirmedSl := make([]string, 0, list.Len())
 	for e := list.Front(); e != nil; e = e.Next() {
 		pushQueue.SendType = sendType
@@ -119,7 +114,6 @@ func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel, sendType s
 		pushQueue.MsgSeq = e.Value.(Message).MsgSeq
 		pushQueue.UserKey = e.Value.(Message).UserKey
 		pushQueue.TestYn = e.Value.(Message).TestYn
-
 		payload, _ := json.Marshal(pushQueue)
 		err := ch.Publish(
 			"",
@@ -142,11 +136,6 @@ func (pushQueue *PushQueue) SendMQ(list *list.List, ch *amqp.Channel, sendType s
 
 // SendMQ (RepeatPushQueue)...
 func (pushQueue *RepeatPushQueue) SendMQ(li *list.List, ch *amqp.Channel, sendType string) []string {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("[Recover] RepeatPushQueue sendMQ() : %s\n", r)
-		}
-	}()
 	confirmedSl := make([]string, 0, li.Len())
 	for e := li.Front(); e != nil; e = e.Next() {
 		pushQueue.SendType = sendType
